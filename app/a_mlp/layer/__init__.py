@@ -8,6 +8,8 @@ class Layer:
         n_neurons: int, 
         activation: str = 'relu'
     ):
+        from app.a_mlp.optims import Optimizer
+        
         if activation == 'relu':
             self.W: np.ndarray = np.random.randn(n_inputs, n_neurons) * np.sqrt(2.0 / n_inputs)
         else:
@@ -16,6 +18,7 @@ class Layer:
         self.b: np.ndarray = np.zeros((1, n_neurons))
         self.activation: str = activation
         self.optimizer_state: Dict[str, Any] = {}
+        self.optimizer: Optional[Optimizer] = None
 
         self.input: Optional[np.ndarray] = None
         self.z: Optional[np.ndarray] = None
@@ -63,7 +66,7 @@ class Layer:
             sig = self._apply_activation(self.z)
             return sig * (1 - sig)
         elif self.activation == 'softmax':
-            # For softmax, we handle the derivative in the loss function
+            # For softmax, handle the derivative in the loss function
             # Return identity since we use categorical cross-entropy
             return np.ones_like(self.z)
         elif self.activation == 'tanh':
